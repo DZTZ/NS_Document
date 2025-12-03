@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>插件节点使用指南 - 参数详解</title>
+  <style>
+    /* 核心风格：暗色背景，浅色文字 */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1d;
+      color: #dcdcdc;
+      font-size: 15px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #242429;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+    }
+
+    h1 {
+      color: #4CAF50;
+      text-align: center;
+      font-size: 2.2em;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #3a3a40;
+    }
+
+    h2 {
+      color: #00bcd4;
+      margin-top: 50px;
+      font-size: 1.5em;
+      padding-left: 15px;
+      border-left: 4px solid #00bcd4;
+      margin-bottom: 20px;
+    }
+
+    .case-section {
+      margin-bottom: 40px;
+      padding: 25px;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background-color: #2c2c31;
+      transition: box-shadow 0.3s;
+    }
+
+    .case-section:hover {
+      box-shadow: 0 0 15px rgba(0, 188, 212, 0.4);
+    }
+
+    .case-image {
+      width: auto;
+      height: 360px;
+      border-radius: 4px;
+      margin: auto;
+      display: block;
+      border: 1px solid #444;
+    }
+
+    code {
+      background-color: #38383e;
+      color: #ff9800;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-weight: normal;
+    }
+
+    /* 表格样式：用于参数说明 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9em;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #3a3a40;
+    }
+
+    th {
+      background-color: #333;
+      color: #00bcd4;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background-color: #333;
+    }
+
+    .input-param {
+      color: #4CAF50;
+      /* 绿色表示输入 */
+      font-weight: bold;
+    }
+
+    .output-param {
+      color: #f39c12;
+      /* 橙色表示输出 */
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>🛠️ NS_HttpJson Plugin Usage Guide</h1>
+
+    <p>Welcome to this plugin! Below is a detailed explanation of the Blueprint nodes to help you quickly integrate UE
+      communication features.</p>
+
+    <div class="case-section">
+      <h2>Generic HTTP Request Node Details (<code>NS Send HTTP Request</code>)</h2>
+      <p>This is a versatile HTTP request node supporting various request types like GET, POST, custom Headers, and
+        request body data.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="http.png" alt="NS Send HTTP Request Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input) - Left Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Execution Pin (Top)</td>
+            <td>Exec</td>
+            <td>**Triggers** the start of the HTTP request.</td>
+          </tr>
+          <tr>
+            <td class="input-param">URL</td>
+            <td>String</td>
+            <td>**Required:** The full URL address of the target Web server.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Request Type</td>
+            <td>Enum</td>
+            <td>Selects the request method, supporting common HTTP methods like **GET**, **POST**, **PUT**, and
+              **DELETE**.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Header</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>Optional: Used to set custom HTTP headers, such as `Content-Type` or `Authorization`.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Post Data</td>
+            <td>String</td>
+            <td>Used to carry the request body content (Payload), typically a JSON string, when the
+              <code>Request Type</code> is POST or PUT.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Timeout</td>
+            <td class="float-param">Float</td>
+            <td>Request timeout duration in seconds. Default is 120.0 seconds.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Right Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">On Completed</td>
+            <td>Exec</td>
+            <td>Execution pin triggered when the HTTP request is **finished** (whether successful or failed).</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Json</td>
+            <td>String</td>
+            <td>The raw response content returned by the server, typically a JSON format string.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Code</td>
+            <td class="float-param">Integer</td>
+            <td>The HTTP status code returned by the server (e.g., 200 for success, 404 for not found).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>File Download Node Details (<code>NS Download File</code>)</h2>
+      <p>This node is used to download files from a specified URL, supporting progress tracking, relative path settings,
+        and timeout control.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="download.png" alt="NS Download File Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input) - Left Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Execution Pin (Top)</td>
+            <td>Exec</td>
+            <td>**Triggers** the file download task to start.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Download URL</td>
+            <td>String</td>
+            <td>**Required:** The complete download link (HTTP or HTTPS) for the file.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Save Path</td>
+            <td>String</td>
+            <td>**Required:** The directory or full path where the downloaded file will be saved.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Is Relative Path</td>
+            <td class="bool-param">Boolean</td>
+            <td>Checked (True) means <code>Save Path</code> is relative to the game's root directory; unchecked (False)
+              means it is an absolute path.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Timeout</td>
+            <td class="float-param">Float</td>
+            <td>Request timeout duration in seconds. Default is 120.0 seconds. The task fails if not completed within
+              this time.</td>
+          </tr>
+          <tr>
+            <td class="input-param">File Name Alias</td>
+            <td>String</td>
+            <td>Optional: Specifies a **new file name** for the downloaded file, overriding the original file name from
+              the URL.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Right Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">On Completed</td>
+            <td>Exec</td>
+            <td>Execution pin triggered when the file download task is finished (whether successful or failed).</td>
+          </tr>
+          <tr>
+            <td class="output-param">On Progress</td>
+            <td>Exec</td>
+            <td>**Continuously triggers** during file download to update the progress bar.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Success</td>
+            <td class="bool-param">Boolean</td>
+            <td>Boolean value indicating whether the file was **successfully** downloaded.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Saved File Path</td>
+            <td>String</td>
+            <td>The **complete absolute path** where the file was finally saved.</td>
+          </tr>
+          <tr>
+            <td class="output-param">File Name</td>
+            <td>String</td>
+            <td>The final name of the downloaded file (may be the Alias).</td>
+          </tr>
+          <tr>
+            <td class="output-param">Progress Ratio</td>
+            <td class="float-param">Float</td>
+            <td>The current download progress ratio, ranging from **0.0 to 1.0**.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>File Upload Node Details (<code>NS Upload File</code>)</h2>
+      <p>This node is dedicated to uploading local files to a Web server using multipart form data. It supports progress
+        tracking, custom Headers, and additional form data.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="Upload.png" alt="NS Upload File Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input) - Left Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Execution Pin (Top)</td>
+            <td>Exec</td>
+            <td>**Triggers** the file upload task to start.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Upload URL</td>
+            <td>String</td>
+            <td>**Required:** The API address on the server side that receives the file upload.</td>
+          </tr>
+          <tr>
+            <td class="input-param">File Path</td>
+            <td>String</td>
+            <td>**Required:** The full absolute or relative path of the local file to be uploaded.</td>
+          </tr>
+          <tr>
+            <td class="input-param">File Field Name</td>
+            <td>String</td>
+            <td>**Required:** The form field name used by the server to identify the file part (e.g., `file` or
+              `my_asset`).</td>
+          </tr>
+          <tr>
+            <td class="input-param">Header</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>Optional: Used to add custom HTTP headers, such as an authentication Token.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Post Data</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>Optional: **Additional form data** (e.g., User ID, file description) to be sent along with the file in
+              the request.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Is Relative Path</td>
+            <td class="bool-param">Boolean</td>
+            <td>Checked (True) means <code>File Path</code> is relative to the game's root directory.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Timeout</td>
+            <td class="float-param">Float</td>
+            <td>Request timeout duration in seconds.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Right Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">On Completed</td>
+            <td>Exec</td>
+            <td>Execution pin triggered when the file upload task is **finished** (successful or failed).</td>
+          </tr>
+          <tr>
+            <td class="output-param">On Progress</td>
+            <td>Exec</td>
+            <td>**Continuously triggers** during file upload for progress bar updates.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Success</td>
+            <td class="bool-param">Boolean</td>
+            <td>Boolean value indicating whether the file was **successfully** uploaded.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Content</td>
+            <td>String</td>
+            <td>The raw response content returned by the server (typically JSON feedback on the upload result).</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Code</td>
+            <td class="float-param">Integer</td>
+            <td>The HTTP status code returned by the server.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Progress Ratio</td>
+            <td class="float-param">Float</td>
+            <td>The current upload progress ratio, ranging from **0.0 to 1.0**.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON Data Type Conversion Node Details (<code>NS Json Value To [Type]</code>)</h2>
+      <p>This group of nodes extracts the value corresponding to a key (Key) from a raw JSON string and automatically
+        converts it to the required basic data type for Blueprint, making it a core tool for processing server
+        responses.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="getvalue.png" alt="NS Json Value To [Type] Blueprint Node Group Screenshot" class="case-image">
+
+      <h3>Common Input Parameters (Input) - Applies to all four nodes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json String</td>
+            <td>String</td>
+            <td>**Required:** The JSON string to be parsed. Usually connected from the <code>Response Content</code>
+              output of an HTTP request node.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Key</td>
+            <td>String</td>
+            <td>**Required:** The key name whose corresponding value you want to extract from the JSON string (e.g., to
+              get the value from <code>{"user_id": 123}</code>, the Key is `user_id`).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Return Values for Each Node</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Node Name</th>
+            <th>Return Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS Json Value To String</code></td>
+            <td>String</td>
+            <td>Extracts the value corresponding to the specified Key and converts it to a **string**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Int</code></td>
+            <td>Integer</td>
+            <td>Extracts the value corresponding to the specified Key and converts it to an **integer**. Suitable for
+              IDs, counts, etc.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Float</code></td>
+            <td>Float</td>
+            <td>Extracts the value corresponding to the specified Key and converts it to a **float**. Suitable for
+              prices, coordinates, etc.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Bool</code></td>
+            <td>Boolean</td>
+            <td>Extracts the value corresponding to the specified Key and converts it to a **Boolean** (True/False).
+              Suitable for status flags.</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="case-section">
+      <h2>JSON Path Deep Data Extraction Node Details (<code>NS Json Path To [Type]</code>)</h2>
+      <p>This group of nodes is an advanced JSON parsing utility, allowing you to access deeply nested data within the
+        JSON structure directly using **dot notation (Path)**, simplifying complex JSON processing.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="getvalue2.png" alt="NS Json Path To [Type] Blueprint Node Group Screenshot" class="case-image">
+
+      <h3>Common Input Parameters (Input) - Applies to all four nodes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json String</td>
+            <td>String</td>
+            <td>**Required:** The JSON string to be parsed. Usually connected from the <code>Response Content</code>
+              output of an HTTP request node.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Path</td>
+            <td>String</td>
+            <td>**Required:** The JSON path expressed using dot notation. For example, to get the name from
+              <code>{"user": {"info": {"name": "Test"}}}</code>, the Path should be `user.info.name`.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Return Values for Each Node</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Node Name</th>
+            <th>Return Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS Json Path To String</code></td>
+            <td>String</td>
+            <td>Extracts the value based on Path and converts it to a **string**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Int</code></td>
+            <td>Integer</td>
+            <td>Extracts the value based on Path and converts it to an **integer**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Float</code></td>
+            <td>Float</td>
+            <td>Extracts the value based on Path and converts it to a **float**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Bool</code></td>
+            <td>Boolean</td>
+            <td>Extracts the value based on Path and converts it to a **Boolean**.</td>
+          </tr>
+          <tr>
+            <td><code>Return Value</code></td>
+            <td>(Corresponding Type)</td>
+            <td>The final value returned upon successful parsing.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON Array Extraction Node Details (<code>NS Json Value/Path To Array</code>)</h2>
+      <p>This group of nodes handles array data within a JSON structure. Whether using a simple key or a deep path, they
+        convert the data into Blueprint array variables, supporting String, Int, and Float array types.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="getvalueArr.png" alt="NS Json Value/Path To Array Blueprint Node Group Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input) - General</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Applicable Nodes</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json String</td>
+            <td>All</td>
+            <td>String</td>
+            <td>**Required:** The JSON string containing the target array data.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Key</td>
+            <td>Value To Array (Top row)</td>
+            <td>String</td>
+            <td>**Required:** The direct key name of the target array in the JSON.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Path</td>
+            <td>Path To Array (Bottom row)</td>
+            <td>String</td>
+            <td>**Required:** The JSON Path using dot notation, pointing to the location of the target array (e.g.,
+              <code>data.scores.list</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Return Values for Each Node</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Node Name</th>
+            <th>Return Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS Json Value To Array (String)</code></td>
+            <td>String Array</td>
+            <td>Extracts the array based on Key and converts all elements to a **String Array**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Array (Int)</code></td>
+            <td>Integer Array</td>
+            <td>Extracts the array based on Key and converts all elements to an **Integer Array**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Array (Float)</code></td>
+            <td>Float Array</td>
+            <td>Extracts the array based on Key and converts all elements to a **Float Array**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Array (String)</code></td>
+            <td>String Array</td>
+            <td>Extracts the array based on Path and converts all elements to a **String Array**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Array (Int)</code></td>
+            <td>Integer Array</td>
+            <td>Extracts the array based on Path and converts all elements to an **Integer Array**.</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Array (Float)</code></td>
+            <td>Float Array</td>
+            <td>Extracts the array based on Path and converts all elements to a **Float Array**.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>Array Handling Key Points:</strong><br>
+        <ul>
+          <li>This group of nodes is designed specifically for handling JSON arrays (e.g., `"scores": [10, 20, 30]`).
+          </li>
+          <li>If the Key/Path exists but the corresponding value is not an array, or if type conversion fails, the node
+            returns an **empty array**.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON Data Construction Node Details (<code>NS Map To Json</code>)</h2>
+      <p>This node is the core tool for JSON creation. It efficiently serializes a Blueprint **Map&lt;String,
+        String&gt;** structure into a JSON format string suitable for the request body of POST or PUT requests for data
+        submission.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="makeJson.png" alt="NS Map To Json Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input) - Left Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Map</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>**Required:** The Map variable containing key-value pairs. The Map's Key becomes the JSON field name,
+              and the Value becomes the JSON field value.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Right Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>String</td>
+            <td>Returns the serialized JSON format string.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>Usage Example:</strong><br>
+        <ul>
+          <li>If you input a Map: <code>{"user_id": "101", "score": "95.5"}</code></li>
+          <li>The node will output the JSON string: <code>{"user_id": "101", "score": "95.5"}</code></li>
+        </ul>
+        This is the simplest and most efficient way to create a request body (Payload).
+      </div>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON Array String Conversion Node Details (<code>NS Json Array To String Array</code>)</h2>
+      <p>This node handles specialized JSON array strings. It directly converts a JSON array containing pure string
+        elements (e.g., <code>["key1", "key2", "key3"]</code>) entirely into a String Array variable in Blueprint.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="arrtojson.png" alt="NS Json Array To String Array Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input) - Left Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json Array String</td>
+            <td>String</td>
+            <td>**Required:** The string containing the JSON format array. Note: The string must be a valid array
+              structure enclosed by `[` and `]`.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Right Pins</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>String Array</td>
+            <td>Returns the converted **String Array**. If the input is invalid or improperly formatted, an empty array
+              is returned.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>Use Case:</strong><br>
+        <ul>
+          <li>Suitable for specialized APIs where the server returns a raw array string without an encapsulating key.
+          </li>
+          <li>Example Input: <code>["apple", "banana", "cherry"]</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON Array Construction Node Details (<code>NS [Type] Array To Json</code>)</h2>
+      <p>This group of nodes quickly converts various Blueprint array types (String, Int, Float) into JSON array
+        strings. It is the ideal choice for constructing complex array structures (e.g., batch IDs, score lists) when
+        uploading data.</p>
+
+      <p><strong>Blueprint Node Example:</strong></p>
+      <img src="makearr.png" alt="NS Array To Json Blueprint Node Group Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input) - Applies to all three nodes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">String Array</td>
+            <td>String Array</td>
+            <td>**Required:** The String Array to be converted to a JSON string (for `NS String Array To Json` only).
+            </td>
+          </tr>
+          <tr>
+            <td class="input-param">Int Array</td>
+            <td>Integer Array</td>
+            <td>**Required:** The Integer Array to be converted to a JSON string (for `NS Int Array To Json` only).</td>
+          </tr>
+          <tr>
+            <td class="input-param">Float Array</td>
+            <td>Float Array</td>
+            <td>**Required:** The Float Array to be converted to a JSON string (for `NS Float Array To Json` only).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output) - Return Values for Each Node</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Node Name</th>
+            <th>Return Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS String Array To Json</code></td>
+            <td>String</td>
+            <td>Returns the String Array serialized into a JSON string (e.g., <code>["item1", "item2"]</code>).</td>
+          </tr>
+          <tr>
+            <td><code>NS Int Array To Json</code></td>
+            <td>String</td>
+            <td>Returns the Int Array serialized into a JSON string (e.g., <code>[10, 20, 30]</code>).</td>
+          </tr>
+          <tr>
+            <td><code>NS Float Array To Json</code></td>
+            <td>String</td>
+            <td>Returns the Float Array serialized into a JSON string (e.g., <code>[1.5, 2.5]</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>Usage and Connection:</strong><br>
+        <ul>
+          <li>The return value (JSON String) from these nodes is typically nested as a sub-value within the **Map**
+            input of the <code>NS Map To Json</code> node to build complex request bodies.</li>
+          <li>For example, the string generated by <code>NS String Array To Json</code> can be sent as a Value for a
+            specific field in the Map.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="margin-top: 60px; text-align: center; color: #5a5a60; font-size: 1em;">
+      By understanding the function of each pin, you can control data flow and error handling more precisely.<br>
+    </p>
+
+  </div>
+
+</body>
+
+
+</html>

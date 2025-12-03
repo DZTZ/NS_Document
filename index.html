@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>插件节点使用指南 - 参数详解</title>
+  <style>
+    /* 核心风格：暗色背景，浅色文字 */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1d;
+      color: #dcdcdc;
+      font-size: 15px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #242429;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+    }
+
+    h1 {
+      color: #4CAF50;
+      text-align: center;
+      font-size: 2.2em;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #3a3a40;
+    }
+
+    h2 {
+      color: #00bcd4;
+      margin-top: 50px;
+      font-size: 1.5em;
+      padding-left: 15px;
+      border-left: 4px solid #00bcd4;
+      margin-bottom: 20px;
+    }
+
+    .case-section {
+      margin-bottom: 40px;
+      padding: 25px;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background-color: #2c2c31;
+      transition: box-shadow 0.3s;
+    }
+
+    .case-section:hover {
+      box-shadow: 0 0 15px rgba(0, 188, 212, 0.4);
+    }
+
+    .case-image {
+      width: auto;
+      height: 360px;
+      border-radius: 4px;
+      margin: auto;
+      display: block;
+      border: 1px solid #444;
+    }
+
+    code {
+      background-color: #38383e;
+      color: #ff9800;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-weight: normal;
+    }
+
+    /* 表格样式：用于参数说明 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9em;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #3a3a40;
+    }
+
+    th {
+      background-color: #333;
+      color: #00bcd4;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background-color: #333;
+    }
+
+    .input-param {
+      color: #4CAF50;
+      /* 绿色表示输入 */
+      font-weight: bold;
+    }
+
+    .output-param {
+      color: #f39c12;
+      /* 橙色表示输出 */
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>🛠️ NS_HttpJson 插件 使用指南</h1>
+
+    <p>欢迎使用本插件！以下是蓝图节点讲解，帮助您快速集成 UE 通信功能。</p>
+
+    <div class="case-section">
+      <h2>通用 HTTP 请求节点详解 (<code>NS Send HTTP Request</code>)</h2>
+      <p>这是一个通用的 HTTP 请求节点，支持 GET, POST 等多种请求类型，以及自定义 Header 和请求体数据。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="http.png" alt="NS Send HTTP Request 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input) - 左侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚 (顶端)</td>
+            <td>Exec</td>
+            <td>**触发** HTTP 请求发送。</td>
+          </tr>
+          <tr>
+            <td class="input-param">URL</td>
+            <td>String</td>
+            <td>**必填：** 目标 Web 服务器的完整 URL 地址。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Request Type</td>
+            <td>Enum</td>
+            <td>选择请求类型，支持 **GET**, **POST**, **PUT**, **DELETE** 等常见 HTTP 方法。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Header</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>可选：用于设置自定义 HTTP 头信息，例如 `Content-Type`, `Authorization` 等。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Post Data</td>
+            <td>String</td>
+            <td>当 <code>Request Type</code> 为 POST 或 PUT 时，用于携带发送给服务器的请求体内容（Payload），通常是 JSON 字符串。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Timeout</td>
+            <td class="float-param">Float</td>
+            <td>请求超时时间（秒）。默认值 120.0 秒。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 右侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">On Completed</td>
+            <td>Exec</td>
+            <td>HTTP 请求**完成**（无论成功收到响应或失败）时触发的执行引脚。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Json</td>
+            <td>String</td>
+            <td>服务器返回的原始响应内容，通常为 JSON 格式的字符串。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Code</td>
+            <td class="float-param">Integer</td>
+            <td>服务器返回的 HTTP 状态码（例如：200 表示成功，404 表示未找到）。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>文件下载节点详解 (<code>NS Download File</code>)</h2>
+      <p>该节点用于从指定的 URL 下载文件，支持进度跟踪、路径相对性设置和超时控制。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="download.png" alt="NS Download File 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input) - 左侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚 (顶端)</td>
+            <td>Exec</td>
+            <td>**触发**文件下载任务的开始。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Download URL</td>
+            <td>String</td>
+            <td>**必填：** 文件的完整下载链接地址（HTTP 或 HTTPS）。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Save Path</td>
+            <td>String</td>
+            <td>**必填：** 文件下载后保存到的目录或完整路径。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Is Relative Path</td>
+            <td class="bool-param">Boolean</td>
+            <td>勾选 (True) 表示 <code>Save Path</code> 是相对于游戏根目录的相对路径；取消勾选 (False) 表示为绝对路径。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Timeout</td>
+            <td class="float-param">Float</td>
+            <td>请求超时时间（秒），默认 120.0 秒。超过此时间未完成则任务失败。</td>
+          </tr>
+          <tr>
+            <td class="input-param">File Name Alias</td>
+            <td>String</td>
+            <td>可选：为下载的文件指定一个**新的文件名**，会覆盖 URL 中的原始文件名。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 右侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">On Completed</td>
+            <td>Exec</td>
+            <td>文件下载任务结束（无论成功或失败）时触发的执行引脚。</td>
+          </tr>
+          <tr>
+            <td class="output-param">On Progress</td>
+            <td>Exec</td>
+            <td>在文件下载过程中**持续触发**，用于更新进度条。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Success</td>
+            <td class="bool-param">Boolean</td>
+            <td>布尔值：表示文件是否**成功**下载。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Saved File Path</td>
+            <td>String</td>
+            <td>文件最终保存的**完整绝对路径**。</td>
+          </tr>
+          <tr>
+            <td class="output-param">File Name</td>
+            <td>String</td>
+            <td>下载后文件的最终名称（可能使用了 Alias）。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Progress Ratio</td>
+            <td class="float-param">Float</td>
+            <td>当前的下载进度比率，范围从 **0.0 到 1.0**。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>文件上传节点详解 (<code>NS Upload File</code>)</h2>
+      <p>该节点专用于将本地文件以多部分表单数据的形式上传至 Web 服务器，支持进度跟踪、自定义 Header 和额外表单数据。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="Upload.png" alt="NS Upload File 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input) - 左侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚 (顶端)</td>
+            <td>Exec</td>
+            <td>**触发**文件上传任务开始。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Upload URL</td>
+            <td>String</td>
+            <td>**必填：** 服务器端接收文件上传的 API 地址。</td>
+          </tr>
+          <tr>
+            <td class="input-param">File Path</td>
+            <td>String</td>
+            <td>**必填：** 待上传的本地文件的完整绝对或相对路径。</td>
+          </tr>
+          <tr>
+            <td class="input-param">File Field Name</td>
+            <td>String</td>
+            <td>**必填：** 文件在 HTTP 表单中对应的字段名称（例如：`file` 或 `my_asset`）。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Header</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>可选：用于添加自定义 HTTP 头信息，如认证 Token。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Post Data</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>可选：除了文件本身外，需要随请求一同发送的**额外表单数据**（例如：用户ID, 文件描述）。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Is Relative Path</td>
+            <td class="bool-param">Boolean</td>
+            <td>勾选 (True) 表示 <code>File Path</code> 是相对于游戏根目录的路径。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Timeout</td>
+            <td class="float-param">Float</td>
+            <td>请求超时时间（秒）。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 右侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">On Completed</td>
+            <td>Exec</td>
+            <td>文件上传任务**结束**（成功或失败）时触发的执行引脚。</td>
+          </tr>
+          <tr>
+            <td class="output-param">On Progress</td>
+            <td>Exec</td>
+            <td>文件上传过程中**持续触发**，用于更新进度条。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Success</td>
+            <td class="bool-param">Boolean</td>
+            <td>布尔值：表示文件是否**成功**上传。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Content</td>
+            <td>String</td>
+            <td>服务器返回的原始响应内容（通常是上传结果的 JSON 反馈）。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Response Code</td>
+            <td class="float-param">Integer</td>
+            <td>服务器返回的 HTTP 状态码。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Progress Ratio</td>
+            <td class="float-param">Float</td>
+            <td>当前的上传进度比率，范围从 **0.0 到 1.0**。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>数据类型转换节点详解 (<code>NS Json Value To [Type]</code>)</h2>
+      <p>这组节点用于从原始 JSON 字符串中，根据键 (Key) 提取出对应的值，并自动将其转换为蓝图所需的基本数据类型，是处理服务器响应的核心工具。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="getvalue.png" alt="NS Json Value To [Type] 蓝图节点组截图" class="case-image">
+
+      <h3>通用输入参数 (Input) - 适用于所有四个节点</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json String</td>
+            <td>String</td>
+            <td>**必填：** 需要解析的 JSON 字符串。通常连接自 HTTP 请求节点的 <code>Response Content</code> 输出。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Key</td>
+            <td>String</td>
+            <td>**必填：** 您希望从 JSON 字符串中提取其对应值的键名（例如：要获取 <code>{"user_id": 123}</code> 中的值，Key 填 `user_id`）。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 各节点返回值详解</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>节点名称</th>
+            <th>返回值类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS Json Value To String</code></td>
+            <td>String</td>
+            <td>将指定 Key 对应的值提取并转换为**字符串**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Int</code></td>
+            <td>Integer</td>
+            <td>将指定 Key 对应的值提取并转换为**整数**。适用于处理 ID、计数等。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Float</code></td>
+            <td>Float</td>
+            <td>将指定 Key 对应的值提取并转换为**浮点数**。适用于处理价格、坐标等。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Bool</code></td>
+            <td>Boolean</td>
+            <td>将指定 Key 对应的值提取并转换为**布尔值** (True/False)。适用于处理状态旗标。</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="case-section">
+      <h2>JSON Path 深层数据提取节点详解 (<code>NS Json Path To [Type]</code>)</h2>
+      <p>这组节点是 JSON 解析的高级用法，允许您使用**点语法 (Path)** 直接访问 JSON 结构中的深层嵌套数据，无需多步解析。这极大地简化了复杂 JSON 数据的处理流程。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="getvalue2.png" alt="NS Json Path To [Type] 蓝图节点组截图" class="case-image">
+
+      <h3>通用输入参数 (Input) - 适用于所有四个节点</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json String</td>
+            <td>String</td>
+            <td>**必填：** 需要解析的 JSON 字符串。通常连接自 HTTP 请求节点的 <code>Response Content</code> 输出。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Path</td>
+            <td>String</td>
+            <td>**必填：** 使用点语法表示的 JSON 路径。例如，要从 <code>{"user": {"info": {"name": "Test"}}}</code> 中获取名字，Path 应填
+              `user.info.name`。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 各节点返回值详解</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>节点名称</th>
+            <th>返回值类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS Json Path To String</code></td>
+            <td>String</td>
+            <td>根据 Path 提取值并转换为**字符串**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Int</code></td>
+            <td>Integer</td>
+            <td>根据 Path 提取值并转换为**整数**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Float</code></td>
+            <td>Float</td>
+            <td>根据 Path 提取值并转换为**浮点数**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Bool</code></td>
+            <td>Boolean</td>
+            <td>根据 Path 提取值并转换为**布尔值**。</td>
+          </tr>
+          <tr>
+            <td><code>Return Value</code></td>
+            <td>(对应类型)</td>
+            <td>成功解析时返回的最终值。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON 数组提取节点详解 (<code>NS Json Value/Path To Array</code>)</h2>
+      <p>这组节点用于处理 JSON 结构中的数组数据。无论是简单键值还是深层路径，它们都能将数据转换为蓝图中的数组变量，支持 String, Int 和 Float 三种数组类型。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="getvalueArr.png" alt="NS Json Value/Path To Array 蓝图节点组截图" class="case-image">
+
+      <h3>输入参数 (Input) - 通用</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>适用节点</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json String</td>
+            <td>所有</td>
+            <td>String</td>
+            <td>**必填：** 包含目标数组数据的 JSON 字符串。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Key</td>
+            <td>Value To Array (上排)</td>
+            <td>String</td>
+            <td>**必填：** 目标数组在 JSON 中的直接键名。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Path</td>
+            <td>Path To Array (下排)</td>
+            <td>String</td>
+            <td>**必填：** 使用点语法表示的 JSON Path，指向目标数组的位置（例如：<code>data.scores.list</code>）。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 各节点返回值详解</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>节点名称</th>
+            <th>返回值类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS Json Value To Array (String)</code></td>
+            <td>String Array</td>
+            <td>根据 Key 提取数组，并将所有元素转换为**字符串数组**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Array (Int)</code></td>
+            <td>Integer Array</td>
+            <td>根据 Key 提取数组，并将所有元素转换为**整数数组**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Value To Array (Float)</code></td>
+            <td>Float Array</td>
+            <td>根据 Key 提取数组，并将所有元素转换为**浮点数数组**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Array (String)</code></td>
+            <td>String Array</td>
+            <td>根据 Path 提取数组，并将所有元素转换为**字符串数组**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Array (Int)</code></td>
+            <td>Integer Array</td>
+            <td>根据 Path 提取数组，并将所有元素转换为**整数数组**。</td>
+          </tr>
+          <tr>
+            <td><code>NS Json Path To Array (Float)</code></td>
+            <td>Float Array</td>
+            <td>根据 Path 提取数组，并将所有元素转换为**浮点数数组**。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>数组处理重点：</strong><br>
+        <ul>
+          <li>这组节点专为处理 JSON 数组 (例如：`"scores": [10, 20, 30]`) 设计。</li>
+          <li>如果 Key/Path 存在但对应值不是数组，或者类型转换失败，节点将返回一个**空数组**。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON 数据构建节点详解 (<code>NS Map To Json</code>)</h2>
+      <p>该节点是 JSON 制作的核心工具。它将蓝图中的 **Map&lt;String, String&gt;** 结构快速、高效地序列化为符合 HTTP 请求体要求的 JSON 格式字符串，用于 POST 或 PUT
+        请求的数据提交。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="makeJson.png" alt="NS Map To Json 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input) - 左侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Map</td>
+            <td>Map&lt;String, String&gt;</td>
+            <td>**必填：** 包含键值对的 Map 变量。Map 的 Key 会成为 JSON 的字段名，Value 会成为 JSON 的字段值。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 右侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>String</td>
+            <td>返回序列化后的 JSON 格式字符串。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>使用示例：</strong><br>
+        <ul>
+          <li>如果您输入一个 Map: <code>{"user_id": "101", "score": "95.5"}</code></li>
+          <li>节点将输出 JSON 字符串: <code>{"user_id": "101", "score": "95.5"}</code></li>
+        </ul>
+        这是创建请求体 (Payload) 最简洁高效的方式。
+      </div>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON 数组字符串转换节点详解 (<code>NS Json Array To String Array</code>)</h2>
+      <p>该节点用于处理特殊的 JSON 数组字符串，它直接将一个包含纯字符串元素的 JSON 数组（例如：<code>["key1", "key2", "key3"]</code>）整体转换为蓝图中的 String Array
+        变量。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="arrtojson.png" alt="NS Json Array To String Array 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input) - 左侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Json Array String</td>
+            <td>String</td>
+            <td>**必填：** 包含 JSON 格式数组的字符串。注意：该字符串必须是以 `[` 和 `]` 包裹的有效数组结构。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 右侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>String Array</td>
+            <td>返回转换后的**字符串数组**。如果输入无效或格式错误，则返回一个空数组。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>使用场景：</strong><br>
+        <ul>
+          <li>适用于服务器直接返回一个不包含键名的纯数组字符串的特殊接口。</li>
+          <li>示例输入：<code>["apple", "banana", "cherry"]</code>。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="case-section">
+      <h2>JSON 数组制作节点详解 (<code>NS [Type] Array To Json</code>)</h2>
+      <p>这组节点用于将蓝图中的各种基本类型数组（String, Int, Float）快速转换为 JSON 数组字符串。这是在上传数据时构建复杂数组结构（例如批量ID、得分列表）的理想选择。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="makearr.png" alt="NS Array To Json 蓝图节点组截图" class="case-image">
+
+      <h3>输入参数 (Input) - 适用于所有三个节点</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">String Array</td>
+            <td>String Array</td>
+            <td>**必填：** 需要转换为 JSON 字符串的字符串数组（仅限 `NS String Array To Json`）。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Int Array</td>
+            <td>Integer Array</td>
+            <td>**必填：** 需要转换为 JSON 字符串的整数数组（仅限 `NS Int Array To Json`）。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Float Array</td>
+            <td>Float Array</td>
+            <td>**必填：** 需要转换为 JSON 字符串的浮点数数组（仅限 `NS Float Array To Json`）。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 各节点返回值详解</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>节点名称</th>
+            <th>返回值类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>NS String Array To Json</code></td>
+            <td>String</td>
+            <td>返回 String Array 序列化后的 JSON 字符串（例如：<code>["item1", "item2"]</code>）。</td>
+          </tr>
+          <tr>
+            <td><code>NS Int Array To Json</code></td>
+            <td>String</td>
+            <td>返回 Int Array 序列化后的 JSON 字符串（例如：<code>[10, 20, 30]</code>）。</td>
+          </tr>
+          <tr>
+            <td><code>NS Float Array To Json</code></td>
+            <td>String</td>
+            <td>返回 Float Array 序列化后的 JSON 字符串（例如：<code>[1.5, 2.5]</code>）。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>用途与连接：</strong><br>
+        <ul>
+          <li>这些节点的返回值（JSON String）通常作为子值，嵌套进 <code>NS Map To Json</code> 节点的 **Map** 中，用于构建复杂的请求体。</li>
+          <li>例如，使用 <code>NS String Array To Json</code> 生成的字符串可以作为 Map 的一个 Value 字段发送。</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="margin-top: 60px; text-align: center; color: #5a5a60; font-size: 1em;">
+      通过理解每个引脚的作用，您可以更精确地控制数据流和错误处理。<br>
+    </p>
+
+  </div>
+
+</body>
+
+</html>
