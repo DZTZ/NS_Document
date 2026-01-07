@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plugin Node User Guide - Parameter Details</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>🛠️ NS_Replay Plugin User Guide</h1>
+    <p>Welcome! This guide explains the Blueprint nodes to help you quickly integrate Unreal Engine replay
+      functionality.</p>
+
+    <div class="case-section">
+      <h2>Start Recording (<code>Start Recording</code>)</h2>
+      <p>This node is used to initiate the recording process for the current game session. You can specify a unique name
+        for each recording to make it easier to locate and play back later.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="start_recording.png" alt="Start Recording Blueprint Node" class="case-image">
+
+      <h3>Input Parameters (Left Pins)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec (Top)</td>
+            <td>Exec</td>
+            <td>**Trigger:** Starts the recording logic; the system begins capturing game data immediately.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Replay Name</td>
+            <td>String</td>
+            <td>**Required:** Specifies the unique filename (ID) for this recording. Use unique identifiers to avoid
+              overwriting old files.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Right Pins)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec (Top)</td>
+            <td>Exec</td>
+            <td>Triggers immediately after the recording command is issued. Note: This only indicates the "Start"
+              operation was executed.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Success Flag:** Returns `True` if recording started successfully; `False` if it failed (e.g., due to
+              permissions, disk space, or an active recording).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Stop Recording (<code>Stop Recording</code>)</h2>
+      <p>This node is used to stop the current game recording. Once called, the system finalizes the data and saves the
+        replay file.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="stop_recording.png" alt="Stop Recording Blueprint Node" class="case-image">
+
+      <h3>Input Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec (Top)</td>
+            <td>Exec</td>
+            <td>**Trigger:** Stops the recording logic.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec (Top)</td>
+            <td>Exec</td>
+            <td>Triggers after the stop command is issued.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Success Flag:** Returns `True` if recording stopped successfully; `False` if no recording was
+              currently active.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Get Replay List (<code>Get Replay List</code>)</h2>
+      <p>This node is used to retrieve a list of all available replay files from the storage device.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="get_replay_list.png" alt="Get Replay List Blueprint Node" class="case-image">
+
+      <h3>Output Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Out Replay List</td>
+            <td>Array (Struct)</td>
+            <td>**Core Data:** An array containing replay information. Each element includes the name, path, and other
+              struct data.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Success Flag:** Whether the list was successfully retrieved (returns <code>True</code> even if the
+              list is empty).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Data Structure: Replay Info (via Break Node)</h3>
+      <ul>
+        <li><strong>Replay Name (String):</strong> The unique name assigned during recording.</li>
+        <li><strong>Replay Path (String):</strong> The physical storage path of the file on the disk.</li>
+      </ul>
+    </div>
+
+    <div class="case-section">
+      <h2>Play Replay (<code>Play Replay</code>)</h2>
+      <p>This node initiates the playback functionality. The system searches for a file matching the input name and
+        switches to replay spectator mode.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="play_replay.png" alt="Play Replay Blueprint Node" class="case-image">
+
+      <h3>Input Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers the loading and playback logic.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Replay Name</td>
+            <td>String</td>
+            <td>**Required:** The name of the replay file to play (e.g., <code>myReplay_2025-12-06 19-56</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers immediately after the play command is issued.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Success Flag:** Returns <code>True</code> if the file was found and playback started;
+              <code>False</code> if the file is missing or failed to load.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Delete Replay (<code>Delete Replay</code>)</h2>
+      <p>Used to clean up unwanted recording data. Note: Deletion is permanent and irreversible.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="delete_replay.png" alt="Delete Replay Blueprint Node" class="case-image">
+
+      <h3>Input Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers the file deletion logic.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Replay Name</td>
+            <td>String</td>
+            <td>**Required:** The name of the target replay file to delete.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers once the deletion attempt is complete.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Success Flag:** Returns <code>True</code> if deleted; <code>False</code> if the file was not found or
+              deletion failed.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Get Replay Total Duration (<code>Get Replay Total Duration</code>)</h2>
+      <p>Called during playback to return the total length of the current replay. Useful for setting the maximum value
+        of a progress bar.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="get_total_duration.png" alt="Get Total Duration Blueprint Node" class="case-image">
+
+      <h3>Output Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td class="float-param">Float</td>
+            <td>**Value:** The total duration of the replay (in seconds). Usually returns 0.0 if not in a replay.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Get Current Replay Time (<code>Get Current Replay Time</code>)</h2>
+      <p>Used to track replay progress in real-time. It can be used with <code>Tick</code> or a timer to synchronize and
+        update the progress bar and time text on the UI.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="get_current_time.png" alt="Get Current Replay Time Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers the instruction to get the current playback progress.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggered after the instruction has been executed.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td class="float-param">Float</td>
+            <td>**Return Value:** The current position of the replay in seconds (e.g., 15.5 seconds).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Seek To Time (<code>Seek To Time</code>)</h2>
+      <p>Allows players to jump directly to a specific timestamp in the replay via a progress bar or by entering a
+        value. Commonly used for quickly locating highlight moments.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="seek_to_time.png" alt="Seek To Time Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers the seek instruction.</td>
+          </tr>
+          <tr>
+            <td class="input-param">Time in Seconds</td>
+            <td class="float-param">Float</td>
+            <td>**Target Time:** The time point you want to jump to (in seconds). Ensure the value is between 0 and the
+              total duration.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggered after the seek request is issued.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Return Value:** Whether the seek operation was successfully initiated.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Set Replay Playback Speed (<code>Set Replay Playback Speed</code>)</h2>
+      <p>Adjusts the playback rate. For example, 2.0 is double speed, while 0.5 is slow motion.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="set_playback_speed.png" alt="Set Playback Speed Blueprint Node" class="case-image">
+
+      <h3>Input Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="input-param">Playback Speed</td>
+            <td class="float-param">Float</td>
+            <td>**Rate:** Default is 1.0.
+              <ul>
+                <li>&gt; 1.0: Fast forward</li>
+                <li>&lt; 1.0: Slow motion</li>
+                <li>0.0: Pause (implementation dependent)</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Pause Replay (<code>Pause Replay</code>)</h2>
+      <p>Called during the replay process to freeze the current replay frame and progress. Often used to implement pause
+        functionality in a player interface.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="pause_replay.png" alt="Pause Replay Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers the logic command to pause the replay.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggered after the pause command has been executed.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Return Value:** Indicates if the pause was successful. Returns <code>False</code> if the world is not
+              currently in replay mode.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Resume Replay (<code>Resume Replay</code>)</h2>
+      <p>Used to restart playback for a replay that is currently paused, continuing along the recorded timeline.</p>
+
+      <p><strong>Blueprint Node:</strong></p>
+      <img src="resume_replay.png" alt="Resume Replay Blueprint Node Screenshot" class="case-image">
+
+      <h3>Input Parameters (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggers the logic command to resume playback.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Output Parameters (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Exec</td>
+            <td>Exec</td>
+            <td>Triggered after the resume command has been executed.</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Return Value:** Indicates whether playback was successfully resumed.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Is World In Replay (<code>Is World In Replay</code>)</h2>
+      <p>Detects the current environment. Used to differentiate between "Normal Gameplay" and "Replay Mode" for UI or
+        logic purposes.</p>
+
+      <p><strong>Blueprint Node：</strong></p>
+      <img src="is_world_in_replay.png" alt="Is World In Replay 蓝图节点截图" class="case-image">
+
+      <h3>Output Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**Value:** Returns <code>True</code> if currently in replay mode; <code>False</code> otherwise.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>Get Current DateTime (<code>Get Current DateTime</code>)</h2>
+      <p>Retrieves the current local system date and time as a string. Use this as part of the
+        <code>Start Recording</code> name to ensure uniqueness.
+      </p>
+
+      <p><strong>Blueprint Node：</strong></p>
+      <img src="get_current_datetime.png" alt="Get Current DateTime 蓝图节点截图" class="case-image">
+
+      <h3>Output Parameters</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Data Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>String</td>
+            <td>**Value:** Current system time format (e.g., <code>2026-01-07 15-36</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+
+</html>

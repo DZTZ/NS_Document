@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>插件节点使用指南 - 参数详解</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>🛠️ NS_Replay 插件 使用指南</h1>
+    <p>欢迎使用本插件！以下是蓝图节点讲解，帮助您快速集成 UE 回放功能。</p>
+
+    <div class="case-section">
+      <h2>开始录制回放 (<code>Start Recording</code>)</h2>
+      <p>该节点用于启动当前游戏会话的录制过程。您可以为每个录制文件指定唯一的名称，以便后续进行查找和播放。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="start_recording.png" alt="Start Recording 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input) - 左侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚 (顶端)</td>
+            <td>Exec</td>
+            <td>**触发** 录制逻辑，调用后系统将立即开始记录游戏数据。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Replay Name</td>
+            <td>String</td>
+            <td>**必填：** 指定本次录制的文件名称（ID）。建议使用唯一标识符，避免覆盖旧的回放文件。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 右侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚 (顶端)</td>
+            <td>Exec</td>
+            <td>录制指令成功发出后立即触发。注意：这仅表示“开始录制”的操作已执行。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 标识录制任务是否成功启动。返回 `True` 表示录制已开始，返回 `False` 可能是由于权限、磁盘空间或已有正在进行的录制任务。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>停止录制回放 (<code>Stop Recording</code>)</h2>
+      <p>该节点用于停止当前正在进行的游戏录制。调用此节点后，系统将结束录制并保存回放文件。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="stop_recording.png" alt="Stop Recording 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input) - 左侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚 (顶端)</td>
+            <td>Exec</td>
+            <td>**触发** 停止录制逻辑。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output) - 右侧引脚</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚 (顶端)</td>
+            <td>Exec</td>
+            <td>停止录制指令发出后触发后续逻辑。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 标识是否成功停止录制。如果当前并没有正在进行的录制任务，可能会返回 `False`。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>获取回放列表 (<code>Get Replay List</code>)</h2>
+      <p>该节点用于从存储设备中读取所有可用的回放文件信息列表。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="get_replay_list.png" alt="Get Replay List 蓝图节点截图" class="case-image">
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Out Replay List</td>
+            <td>Array (Struct)</td>
+            <td>**核心数据：** 包含所有回放信息的数组。每个元素包含回放名称、路径等结构体数据。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 是否成功获取到列表（即使列表为空，只要查询操作成功也会返回 <code>True</code>）。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>数据结构：Replay Info (通过 Break 节点查看)</h3>
+      <ul>
+        <li><strong>Replay Name (String):</strong> 录制时指定的唯一名称。</li>
+        <li><strong>Replay Path (String):</strong> 文件在磁盘上的物理存储路径。</li>
+      </ul>
+    </div>
+
+    <div class="case-section">
+      <h2>播放回放 (<code>Play Replay</code>)</h2>
+      <p>该节点用于启动回放功能。系统将寻找与输入名称匹配的录制文件并切换到回放观察模式。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="play_replay.png" alt="Play Replay 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发加载并播放回放的逻辑。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Replay Name</td>
+            <td>String</td>
+            <td>**必填：** 需要播放的回放文件名称（例如：<code>myReplay_2025-12-06 19-56</code>）。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>指令发出后立即触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 如果成功找到文件并开始播放，返回 <code>True</code>；若文件不存在或加载失败则返回 <code>False</code>。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>删除回放 (<code>Delete Replay</code>)</h2>
+      <p>该节点用于清理不再需要的录制数据。注意：删除操作是不可逆的。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="delete_replay.png" alt="Delete Replay 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发删除文件的逻辑。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Replay Name</td>
+            <td>String</td>
+            <td>**必填：** 想要删除的目标回放文件名称。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>删除操作尝试完成后触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 文件成功删除返回 <code>True</code>；若文件未找到或由于权限等原因删除失败则返回 <code>False</code>。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>获取回放总时长 (<code>Get Replay Total Duration</code>)</h2>
+      <p>在回放过程中调用，返回当前正在播放的回放视频的总持续时间。常用于初始化播放进度条的最大值。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="get_total_duration.png" alt="Get Replay Total Duration 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发查询总时长的指令。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>查询指令执行完毕后触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td class="float-param">Float</td>
+            <td>**返回值：** 回放的总时长（以秒为单位）。若未在回放中，通常返回 0.0。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>获取当前回放时间 (<code>Get Current Replay Time</code>)</h2>
+      <p>用于实时追踪回放进度。可以配合 <code>Tick</code> 或计时器使用，以同步更新 UI 上的进度条和时间文字显示。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="get_current_time.png" alt="Get Current Replay Time 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发获取当前播放进度的指令。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>指令执行完毕后触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td class="float-param">Float</td>
+            <td>**返回值：** 当前回放所在的秒数位置（例如：15.5 秒）。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>跳转至时间点 (<code>Seek To Time</code>)</h2>
+      <p>允许玩家通过进度条或输入数值，直接跳转到回放中的特定时间位置。常用于快速定位精彩瞬间。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="seek_to_time.png" alt="Seek To Time 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发跳转指令。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Time in Seconds</td>
+            <td class="float-param">Float</td>
+            <td>**目标时间：** 想要跳转到的时间点（单位：秒）。请确保数值在 0 到总时长之间。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>跳转请求发出后触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 跳转操作是否成功启动。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>设置回放播放速度 (<code>Set Replay Playback Speed</code>)</h2>
+      <p>动态调整回放的播放速率。例如，设置为 2.0 表示两倍速快进，设置为 0.5 表示慢动作播放。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="set_playback_speed.png" alt="Set Replay Playback Speed 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发速度变更指令。</td>
+          </tr>
+          <tr>
+            <td class="input-param">Playback Speed</td>
+            <td class="float-param">Float</td>
+            <td>**播放速率：** 默认值为 1.0（正常速度）。
+              <ul>
+                <li>&gt; 1.0: 加速播放</li>
+                <li>&lt; 1.0: 慢动作</li>
+                <li>0.0: 暂停（取决于具体实现）</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>速率设置成功后触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 速度修改是否成功应用。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>暂停回放 (<code>Pause Replay</code>)</h2>
+      <p>在回放过程中调用，将当前回放画面和进度冻结。常用于实现播放器的暂停功能。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="pause_replay.png" alt="Pause Replay 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发暂停回放的逻辑指令。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>暂停指令执行完毕后触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 是否成功执行暂停。若当前未处于回放状态则返回 <code>False</code>。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>恢复回放 (<code>Resume Replay</code>)</h2>
+      <p>用于将处于暂停状态的回放重新开始播放，继续记录的时间线。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="resume_replay.png" alt="Resume Replay 蓝图节点截图" class="case-image">
+
+      <h3>输入参数 (Input)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="exec-param">执行引脚</td>
+            <td>Exec</td>
+            <td>触发恢复播放的逻辑指令。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">执行引脚</td>
+            <td>Exec</td>
+            <td>恢复指令执行完毕后触发。</td>
+          </tr>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 是否成功恢复播放。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>判断世界是否处于回放中 (<code>Is World In Replay</code>)</h2>
+      <p>该节点用于实时检测当前环境。常用于在 UI 或逻辑脚本中区分“正常游戏状态”与“回放查看状态”，以执行不同的交互逻辑。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="is_world_in_replay.png" alt="Is World In Replay 蓝图节点截图" class="case-image">
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>Boolean</td>
+            <td>**返回值：** 如果当前正处于回放模式返回 <code>True</code>；若在正常游戏逻辑中则返回 <code>False</code>。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="case-section">
+      <h2>获取当前日期时间 (<code>Get Current DateTime</code>)</h2>
+      <p>获取当前本地系统的日期和时间字符串。建议在执行 <code>Start Recording</code> 前调用此节点，将结果作为回放名称的一部分，以确保文件名的唯一性。</p>
+
+      <p><strong>蓝图节点图：</strong></p>
+      <img src="get_current_datetime.png" alt="Get Current DateTime 蓝图节点截图" class="case-image">
+
+      <h3>输出参数 (Output)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>参数名称</th>
+            <th>数据类型</th>
+            <th>用途描述</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="output-param">Return Value</td>
+            <td>String</td>
+            <td>**返回值：** 当前系统时间的字符串格式（例如：<code>2026-01-07 15-36</code>）。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+
+</html>
